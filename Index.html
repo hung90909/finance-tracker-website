@@ -1,0 +1,783 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Finance Tracker - Ứng dụng theo dõi chi tiêu cá nhân. Ghi nhận thu nhập, chi tiêu, phân loại giao dịch và xem tóm tắt hàng tháng.">
+    <meta name="theme-color" content="#0a7ea4">
+    <title>Finance Tracker - Ứng Dụng Theo Dõi Chi Tiêu</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #0a7ea4;
+            --success: #22C55E;
+            --error: #EF4444;
+            --background: #ffffff;
+            --surface: #f5f5f5;
+            --foreground: #11181C;
+            --muted: #687076;
+            --border: #E5E7EB;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, var(--primary) 0%, #0a5f7f 100%);
+            color: var(--foreground);
+            line-height: 1.6;
+        }
+
+        /* Navigation */
+        nav {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 1rem 2rem;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        nav .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        nav .logo {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: var(--primary);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        nav .logo img {
+            width: 40px;
+            height: 40px;
+        }
+
+        nav ul {
+            list-style: none;
+            display: flex;
+            gap: 2rem;
+        }
+
+        nav a {
+            text-decoration: none;
+            color: var(--foreground);
+            font-weight: 500;
+            transition: color 0.3s;
+        }
+
+        nav a:hover {
+            color: var(--primary);
+        }
+
+        /* Hero Section */
+        .hero {
+            background: linear-gradient(135deg, var(--primary) 0%, #0a5f7f 100%);
+            color: white;
+            padding: 6rem 2rem;
+            text-align: center;
+        }
+
+        .hero .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .hero h1 {
+            font-size: 3.5rem;
+            margin-bottom: 1rem;
+            font-weight: 700;
+        }
+
+        .hero p {
+            font-size: 1.25rem;
+            margin-bottom: 2rem;
+            opacity: 0.95;
+        }
+
+        .hero .cta-buttons {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 1rem 2rem;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            text-decoration: none;
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: inline-block;
+        }
+
+        .btn-primary {
+            background: white;
+            color: var(--primary);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            border: 2px solid white;
+        }
+
+        .btn-secondary:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: translateY(-2px);
+        }
+
+        /* Container */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+        }
+
+        /* Features Section */
+        .features {
+            background: white;
+            padding: 5rem 2rem;
+        }
+
+        .features h2 {
+            text-align: center;
+            font-size: 2.5rem;
+            margin-bottom: 3rem;
+            color: var(--foreground);
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 2rem;
+        }
+
+        .feature-card {
+            background: var(--surface);
+            padding: 2rem;
+            border-radius: 12px;
+            border: 1px solid var(--border);
+            text-align: center;
+            transition: all 0.3s;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        }
+
+        .feature-card .icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+
+        .feature-card h3 {
+            font-size: 1.25rem;
+            margin-bottom: 0.5rem;
+            color: var(--foreground);
+        }
+
+        .feature-card p {
+            color: var(--muted);
+            font-size: 0.95rem;
+        }
+
+        /* Screenshots Section */
+        .screenshots {
+            background: var(--surface);
+            padding: 5rem 2rem;
+        }
+
+        .screenshots h2 {
+            text-align: center;
+            font-size: 2.5rem;
+            margin-bottom: 3rem;
+            color: var(--foreground);
+        }
+
+        .screenshots-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+        }
+
+        .screenshot {
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s;
+        }
+
+        .screenshot:hover {
+            transform: scale(1.05);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+        }
+
+        .screenshot img {
+            width: 100%;
+            height: 400px;
+            object-fit: cover;
+            background: linear-gradient(135deg, var(--primary) 0%, #0a5f7f 100%);
+        }
+
+        .screenshot-label {
+            padding: 1rem;
+            text-align: center;
+            font-weight: 600;
+            color: var(--foreground);
+            border-top: 1px solid var(--border);
+        }
+
+        /* Download Section */
+        .download {
+            background: white;
+            padding: 5rem 2rem;
+        }
+
+        .download .container {
+            max-width: 600px;
+            margin: 0 auto;
+            text-align: center;
+        }
+
+        .download h2 {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            color: var(--foreground);
+        }
+
+        .download p {
+            font-size: 1.1rem;
+            color: var(--muted);
+            margin-bottom: 2rem;
+        }
+
+        .download-box {
+            background: var(--surface);
+            padding: 2rem;
+            border-radius: 12px;
+            border: 2px dashed var(--border);
+            margin-bottom: 2rem;
+        }
+
+        .download-box .file-info {
+            margin-bottom: 1.5rem;
+        }
+
+        .file-info p {
+            color: var(--muted);
+            font-size: 0.9rem;
+            margin: 0.5rem 0;
+        }
+
+        .download-btn {
+            background: var(--primary);
+            color: white;
+            padding: 1.5rem 3rem;
+            border-radius: 8px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            text-decoration: none;
+            display: inline-block;
+            transition: all 0.3s;
+            border: none;
+            cursor: pointer;
+        }
+
+        .download-btn:hover {
+            background: #0a5f7f;
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(10, 126, 164, 0.3);
+        }
+
+        /* Installation Guide */
+        .installation {
+            background: var(--surface);
+            padding: 5rem 2rem;
+        }
+
+        .installation h2 {
+            text-align: center;
+            font-size: 2.5rem;
+            margin-bottom: 3rem;
+            color: var(--foreground);
+        }
+
+        .steps {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .step {
+            background: white;
+            padding: 2rem;
+            margin-bottom: 1.5rem;
+            border-radius: 12px;
+            border-left: 4px solid var(--primary);
+        }
+
+        .step-number {
+            display: inline-block;
+            background: var(--primary);
+            color: white;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            text-align: center;
+            line-height: 40px;
+            font-weight: bold;
+            margin-bottom: 1rem;
+        }
+
+        .step h3 {
+            color: var(--foreground);
+            margin-bottom: 0.5rem;
+        }
+
+        .step p {
+            color: var(--muted);
+            line-height: 1.8;
+        }
+
+        /* FAQ Section */
+        .faq {
+            background: white;
+            padding: 5rem 2rem;
+        }
+
+        .faq h2 {
+            text-align: center;
+            font-size: 2.5rem;
+            margin-bottom: 3rem;
+            color: var(--foreground);
+        }
+
+        .faq-container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .faq-item {
+            margin-bottom: 1.5rem;
+            border-bottom: 1px solid var(--border);
+            padding-bottom: 1.5rem;
+        }
+
+        .faq-item:last-child {
+            border-bottom: none;
+        }
+
+        .faq-question {
+            font-weight: 600;
+            color: var(--foreground);
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: color 0.3s;
+        }
+
+        .faq-question:hover {
+            color: var(--primary);
+        }
+
+        .faq-answer {
+            color: var(--muted);
+            margin-top: 1rem;
+            line-height: 1.8;
+        }
+
+        /* Footer */
+        footer {
+            background: var(--foreground);
+            color: white;
+            padding: 3rem 2rem;
+            text-align: center;
+        }
+
+        footer p {
+            margin-bottom: 0.5rem;
+        }
+
+        footer a {
+            color: var(--primary);
+            text-decoration: none;
+        }
+
+        footer a:hover {
+            text-decoration: underline;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .hero h1 {
+                font-size: 2rem;
+            }
+
+            .hero p {
+                font-size: 1rem;
+            }
+
+            nav ul {
+                gap: 1rem;
+                font-size: 0.9rem;
+            }
+
+            .features h2,
+            .screenshots h2,
+            .download h2,
+            .installation h2,
+            .faq h2 {
+                font-size: 1.8rem;
+            }
+
+            .hero .cta-buttons {
+                flex-direction: column;
+            }
+
+            .btn {
+                width: 100%;
+            }
+        }
+
+        /* Loading animation */
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        .loading {
+            animation: pulse 2s infinite;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav>
+        <div class="container">
+            <div class="logo">
+                💰 Finance Tracker
+            </div>
+            <ul>
+                <li><a href="#features">Tính Năng</a></li>
+                <li><a href="#download">Tải Về</a></li>
+                <li><a href="#installation">Hướng Dẫn</a></li>
+                <li><a href="#faq">FAQ</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="container">
+            <h1>💰 Finance Tracker</h1>
+            <p>Ứng dụng theo dõi chi tiêu cá nhân - Quản lý tài chính hiệu quả</p>
+            <div class="cta-buttons">
+                <a href="#download" class="btn btn-primary">📥 Tải Về Ngay</a>
+                <a href="#features" class="btn btn-secondary">Xem Tính Năng</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section class="features" id="features">
+        <div class="container">
+            <h2>✨ Tính Năng Chính</h2>
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="icon">📝</div>
+                    <h3>Ghi Nhận Giao Dịch</h3>
+                    <p>Thêm thu nhập và chi tiêu một cách dễ dàng với giao diện trực quan</p>
+                </div>
+                <div class="feature-card">
+                    <div class="icon">🏷️</div>
+                    <h3>Phân Loại Giao Dịch</h3>
+                    <p>Phân loại chi tiêu theo danh mục: ăn uống, giao thông, giải trí, v.v.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="icon">📊</div>
+                    <h3>Tóm Tắt Hàng Tháng</h3>
+                    <p>Xem biểu đồ phân bổ chi tiêu và thống kê chi tiết theo danh mục</p>
+                </div>
+                <div class="feature-card">
+                    <div class="icon">💱</div>
+                    <h3>Đa Tiền Tệ</h3>
+                    <p>Hỗ trợ VND, USD, EUR - Chọn tiền tệ phù hợp với bạn</p>
+                </div>
+                <div class="feature-card">
+                    <div class="icon">🔒</div>
+                    <h3>Bảo Mật Tuyệt Đối</h3>
+                    <p>Dữ liệu được lưu trữ cục bộ trên thiết bị - Không chia sẻ với ai</p>
+                </div>
+                <div class="feature-card">
+                    <div class="icon">🌙</div>
+                    <h3>Chế Độ Tối</h3>
+                    <p>Hỗ trợ chế độ sáng/tối - Thoải mái sử dụng vào bất kỳ thời gian</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Screenshots Section -->
+    <section class="screenshots" id="screenshots">
+        <div class="container">
+            <h2>📱 Giao Diện Ứng Dụng</h2>
+            <div class="screenshots-grid">
+                <div class="screenshot">
+                    <div style="background: linear-gradient(135deg, #0a7ea4 0%, #0a5f7f 100%); height: 400px; display: flex; align-items: center; justify-content: center; color: white; font-size: 3rem;">
+                        🏠
+                    </div>
+                    <div class="screenshot-label">Màn Hình Chính</div>
+                </div>
+                <div class="screenshot">
+                    <div style="background: linear-gradient(135deg, #22C55E 0%, #16a34a 100%); height: 400px; display: flex; align-items: center; justify-content: center; color: white; font-size: 3rem;">
+                        ➕
+                    </div>
+                    <div class="screenshot-label">Thêm Giao Dịch</div>
+                </div>
+                <div class="screenshot">
+                    <div style="background: linear-gradient(135deg, #F59E0B 0%, #d97706 100%); height: 400px; display: flex; align-items: center; justify-content: center; color: white; font-size: 3rem;">
+                        📊
+                    </div>
+                    <div class="screenshot-label">Tóm Tắt Hàng Tháng</div>
+                </div>
+                <div class="screenshot">
+                    <div style="background: linear-gradient(135deg, #8B5CF6 0%, #7c3aed 100%); height: 400px; display: flex; align-items: center; justify-content: center; color: white; font-size: 3rem;">
+                        ⚙️
+                    </div>
+                    <div class="screenshot-label">Cài Đặt</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Download Section -->
+    <section class="download" id="download">
+        <div class="container">
+            <h2>📥 Tải Về Ứng Dụng</h2>
+            <p>Finance Tracker phiên bản 1.0.0 - Hoàn toàn miễn phí</p>
+            <div class="download-box">
+                <div class="file-info">
+                    <p><strong>📦 Tên File:</strong> Finance Tracker v1.0.0</p>
+                    <p><strong>💾 Dung Lượng:</strong> ~50-80 MB</p>
+                    <p><strong>📱 Yêu Cầu:</strong> Android 7.0 trở lên</p>
+                    <p><strong>🔄 Cập Nhật:</strong> Tháng 4, 2026</p>
+                </div>
+                <button class="download-btn" onclick="downloadAPK()">
+                    📥 Tải Về APK
+                </button>
+                <p style="margin-top: 1rem; font-size: 0.9rem; color: var(--muted);">
+                    Hoặc quét QR Code để tải qua Expo Go
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Installation Guide -->
+    <section class="installation" id="installation">
+        <div class="container">
+            <h2>🚀 Hướng Dẫn Cài Đặt</h2>
+            <div class="steps">
+                <div class="step">
+                    <div class="step-number">1</div>
+                    <h3>Tải Về File APK</h3>
+                    <p>Nhấn nút "Tải Về APK" ở trên. File sẽ được tải về thư mục Downloads của bạn.</p>
+                </div>
+                <div class="step">
+                    <div class="step-number">2</div>
+                    <h3>Bật Cài Đặt Từ Nguồn Không Xác Định</h3>
+                    <p>
+                        Vào <strong>Settings (Cài đặt)</strong> → <strong>Security (Bảo mật)</strong> → 
+                        Tìm <strong>"Unknown sources"</strong> hoặc <strong>"Install unknown apps"</strong> → Bật nó
+                    </p>
+                </div>
+                <div class="step">
+                    <div class="step-number">3</div>
+                    <h3>Mở File APK</h3>
+                    <p>Mở ứng dụng Files (Quản lý tệp) → Tìm file APK → Nhấn để mở</p>
+                </div>
+                <div class="step">
+                    <div class="step-number">4</div>
+                    <h3>Cài Đặt Ứng Dụng</h3>
+                    <p>Nhấn nút "Install" → Chờ cài đặt hoàn tất → Nhấn "Open" để chạy</p>
+                </div>
+                <div class="step">
+                    <div class="step-number">5</div>
+                    <h3>Bắt Đầu Sử Dụng</h3>
+                    <p>Ứng dụng đã sẵn sàng! Bắt đầu ghi nhận thu nhập và chi tiêu ngay.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- FAQ Section -->
+    <section class="faq" id="faq">
+        <div class="container">
+            <h2>❓ Câu Hỏi Thường Gặp</h2>
+            <div class="faq-container">
+                <div class="faq-item">
+                    <div class="faq-question" onclick="toggleFAQ(this)">
+                        <span>Ứng dụng có an toàn không?</span>
+                        <span>▼</span>
+                    </div>
+                    <div class="faq-answer" style="display: none;">
+                        Có, hoàn toàn an toàn. Dữ liệu được lưu trữ cục bộ trên thiết bị của bạn. Chúng tôi không thu thập hoặc chia sẻ bất kỳ thông tin cá nhân nào.
+                    </div>
+                </div>
+                <div class="faq-item">
+                    <div class="faq-question" onclick="toggleFAQ(this)">
+                        <span>Có phí gì không?</span>
+                        <span>▼</span>
+                    </div>
+                    <div class="faq-answer" style="display: none;">
+                        Không, ứng dụng hoàn toàn miễn phí. Không có phí ẩn, không có quảng cáo, không có yêu cầu đăng ký.
+                    </div>
+                </div>
+                <div class="faq-item">
+                    <div class="faq-question" onclick="toggleFAQ(this)">
+                        <span>Cần internet để sử dụng không?</span>
+                        <span>▼</span>
+                    </div>
+                    <div class="faq-answer" style="display: none;">
+                        Không cần. Ứng dụng hoạt động hoàn toàn offline. Bạn có thể sử dụng mà không cần kết nối internet.
+                    </div>
+                </div>
+                <div class="faq-item">
+                    <div class="faq-question" onclick="toggleFAQ(this)">
+                        <span>Làm sao để cập nhật ứng dụng?</span>
+                        <span>▼</span>
+                    </div>
+                    <div class="faq-answer" style="display: none;">
+                        Khi có phiên bản mới, bạn có thể tải file APK mới từ trang web này và cài đặt lại. Nó sẽ tự động ghi đè phiên bản cũ.
+                    </div>
+                </div>
+                <div class="faq-item">
+                    <div class="faq-question" onclick="toggleFAQ(this)">
+                        <span>Dữ liệu có mất không nếu gỡ cài đặt?</span>
+                        <span>▼</span>
+                    </div>
+                    <div class="faq-answer" style="display: none;">
+                        Có, dữ liệu sẽ bị xóa khi gỡ cài đặt. Nếu bạn muốn sao lưu, hãy liên hệ với chúng tôi để biết thêm chi tiết.
+                    </div>
+                </div>
+                <div class="faq-item">
+                    <div class="faq-question" onclick="toggleFAQ(this)">
+                        <span>Có hỗ trợ iOS không?</span>
+                        <span>▼</span>
+                    </div>
+                    <div class="faq-answer" style="display: none;">
+                        Hiện tại ứng dụng chỉ có phiên bản Android. Phiên bản iOS sẽ được phát triển trong tương lai.
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <p><strong>Finance Tracker v1.0.0</strong></p>
+            <p>Ứng dụng theo dõi chi tiêu cá nhân - Quản lý tài chính hiệu quả</p>
+            <p style="margin-top: 1.5rem; font-size: 0.9rem;">
+                © 2026 Finance Tracker. Tất cả quyền được bảo lưu.
+            </p>
+            <p style="margin-top: 1rem; font-size: 0.85rem;">
+                <a href="#privacy">Chính Sách Bảo Mật</a> | 
+                <a href="#terms">Điều Khoản Dịch Vụ</a> | 
+                <a href="#contact">Liên Hệ</a>
+            </p>
+        </div>
+    </footer>
+
+    <script>
+        function downloadAPK() {
+            // Thay thế URL này bằng link thực tế của file APK
+            const apkUrl = 'https://example.com/finance-tracker.apk';
+            
+            // Nếu chưa có file APK, hiển thị hướng dẫn
+            alert('📥 Hướng dẫn tải APK:\n\n' +
+                  '1. Vào Management UI của dự án Manus\n' +
+                  '2. Nhấn nút "Publish"\n' +
+                  '3. Chọn "Download APK"\n' +
+                  '4. Lưu file APK\n' +
+                  '5. Upload lên server hoặc Google Drive\n' +
+                  '6. Cập nhật link trong code này\n\n' +
+                  'Hoặc sử dụng link tạm thời: ' + apkUrl);
+            
+            // Uncomment dòng dưới khi có link thực tế
+            // window.location.href = apkUrl;
+        }
+
+        function toggleFAQ(element) {
+            const answer = element.nextElementSibling;
+            const isVisible = answer.style.display !== 'none';
+            
+            // Ẩn tất cả các câu trả lời khác
+            document.querySelectorAll('.faq-answer').forEach(el => {
+                el.style.display = 'none';
+            });
+            
+            // Hiển thị câu trả lời hiện tại nếu nó bị ẩn
+            if (!isVisible) {
+                answer.style.display = 'block';
+            }
+        }
+
+        // Smooth scroll
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+
+        // Hiệu ứng fade-in khi scroll
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -100px 0px'
+        };
+
+        const observer = new IntersectionObserver(function(entries) {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.opacity = '1';
+                    entry.target.style.transform = 'translateY(0)';
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('.feature-card, .screenshot, .step').forEach(el => {
+            el.style.opacity = '0';
+            el.style.transform = 'translateY(20px)';
+            el.style.transition = 'all 0.6s ease-out';
+            observer.observe(el);
+        });
+    </script>
+</body>
+</html>
